@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "name": "LUNCH",
+    "persian": "ناهار"
+  },
+  {
+    "id": 2,
+    "name": "BREAKFAST",
+    "persian": "صبحانه"
+  },
+  {
+    "id": 3,
+    "name": "DINNER",
+    "persian": "شام"
+  }
+]

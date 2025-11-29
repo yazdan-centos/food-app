@@ -1,0 +1,140 @@
+[
+  {
+    "id": 1,
+    "name": "یتیمچه",
+    "price": 16794,
+    "meal_type_id": 1
+  },
+  {
+    "id": 2,
+    "name": "کشک بادمجان",
+    "price": 22066,
+    "meal_type_id": 1
+  },
+  {
+    "id": 3,
+    "name": "کله جوش",
+    "price": 20462,
+    "meal_type_id": 1
+  },
+  {
+    "id": 4,
+    "name": "تاس کباب یزدی",
+    "price": 19050,
+    "meal_type_id": 1
+  },
+  {
+    "id": 5,
+    "name": "اشکنه",
+    "price": 23051,
+    "meal_type_id": 1
+  },
+  {
+    "id": 6,
+    "name": "خوراک کنگر",
+    "price": 16141,
+    "meal_type_id": 1
+  },
+  {
+    "id": 7,
+    "name": "خوراک کدو",
+    "price": 18594,
+    "meal_type_id": 1
+  },
+  {
+    "id": 8,
+    "name": "خوراک فصل",
+    "price": 28732,
+    "meal_type_id": 1
+  },
+  {
+    "id": 9,
+    "name": "خوراک قیمه",
+    "price": 20566,
+    "meal_type_id": 1
+  },
+  {
+    "id": 10,
+    "name": "چی کوفته",
+    "price": 21435,
+    "meal_type_id": 1
+  },
+  {
+    "id": 11,
+    "name": "کباب قارچ",
+    "price": 27965,
+    "meal_type_id": 1
+  },
+  {
+    "id": 12,
+    "name": "خوراک جگر گوسفندی",
+    "price": 17671,
+    "meal_type_id": 3
+  },
+  {
+    "id": 13,
+    "name": "خوراک میگو",
+    "price": 29486,
+    "meal_type_id": 3
+  },
+  {
+    "id": 14,
+    "name": "خوراک بادمجان",
+    "price": 15288,
+    "meal_type_id": 3
+  },
+  {
+    "id": 15,
+    "name": "نیخود آب",
+    "price": 20699,
+    "meal_type_id": 3
+  },
+  {
+    "id": 16,
+    "name": "خوراک لوبیا",
+    "price": 29738,
+    "meal_type_id": 3
+  },
+  {
+    "id": 17,
+    "name": "بریانی",
+    "price": 17826,
+    "meal_type_id": 3
+  },
+  {
+    "id": 18,
+    "name": "میرزا قاسمی",
+    "price": 19239,
+    "meal_type_id": 3
+  },
+  {
+    "id": 19,
+    "name": "واویشکا",
+    "price": 28456,
+    "meal_type_id": 3
+  },
+  {
+    "id": 20,
+    "name": "نون و پنیر و سبزیجات",
+    "price": 18541,
+    "meal_type_id": 2
+  },
+  {
+    "id": 21,
+    "name": "آش کارده",
+    "price": 17334,
+    "meal_type_id": 2
+  },
+  {
+    "id": 22,
+    "name": "حلیم",
+    "price": 19758,
+    "meal_type_id": 2
+  },
+  {
+    "id": 23,
+    "name": "کره و مربا",
+    "price": 26347,
+    "meal_type_id": 2
+  }
+]
