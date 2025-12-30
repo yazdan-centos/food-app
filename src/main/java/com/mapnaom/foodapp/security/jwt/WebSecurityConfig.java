@@ -1,25 +1,20 @@
 package com.mapnaom.foodapp.security.jwt;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -35,7 +30,7 @@ import java.util.List;
  */
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled =true)
+@EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
@@ -95,54 +90,6 @@ public class WebSecurityConfig {
     private final JwtUserDetailsService userDetailsService;
     private final JwtRequestFilter jwtRequestFilter;
 
-    @Bean
-    protected BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-
-    @Bean
-    public AuthenticationProvider daoAuthenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService); // your custom service
-        provider.setPasswordEncoder(bCryptPasswordEncoder());
-        return provider;
-    }
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
-
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .securityMatcher("/api/**")
-                .cors(cors -> cors.configurationSource(apiConfigurationSource()))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(PUBLIC_URLS).permitAll()
-                        .requestMatchers("/api/v1/auth/logout", "/api/v1/auth/validate").authenticated()
-                        .anyRequest().authenticated()
-                )
-                .authenticationProvider(daoAuthenticationProvider()) // <== Register DAO provider here
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
-    @Bean
-    protected CorsConfigurationSource apiConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000")); // Set allowed origins
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH")); // Set allowed HTTP methods
-        configuration.setAllowedHeaders(List.of("*")); // Allow all headers
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Apply CORS settings to all API paths
-        return source;
-    }
-
     // == Define Role Hierarchy with Privilege Inheritance ==
     @Bean
     public static RoleHierarchy roleHierarchy() {
@@ -161,6 +108,55 @@ public class WebSecurityConfig {
                                 VIEW_DAILY_MEAL, VIEW_OWN_PROFILE, EDIT_OWN_PROFILE, CREATE_RESERVATION,
                                 EDIT_OWN_RESERVATION, CANCEL_OWN_RESERVATION, GUEST, VIEW_DISH, VIEW_DAILY_MEAL)
         );
+    }
+
+    @Bean
+    protected BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService); // your custom service
+        provider.setPasswordEncoder(bCryptPasswordEncoder());
+        return provider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .securityMatcher("/api/**")
+//                .cors(cors -> cors.configurationSource(apiConfigurationSource()))
+                .cors(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(PUBLIC_URLS).permitAll()
+                        .requestMatchers("/api/v1/auth/logout", "/api/v1/auth/validate").authenticated()
+                        .anyRequest().authenticated()
+                )
+                .authenticationProvider(daoAuthenticationProvider()) // <== Register DAO provider here
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    protected CorsConfigurationSource apiConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://141.11.1.27:3000", "141.11.1.27:3000")); // Set allowed origins
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH")); // Set allowed HTTP methods
+        configuration.setAllowedHeaders(List.of("*")); // Allow all headers
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // Apply CORS settings to all API paths
+        return source;
     }
 
 //    @Autowired

@@ -27,12 +27,7 @@ public class RoleService {
         return ROLE_CAPTIONS.get(role.getName());
     }
 
-/*******************    💫 Codegeex Inline Diff    *******************/
-    /**
-     * Retrieves roles based on the provided search criteria and converts them to SelectOption objects
-     * @param form The search form containing filter criteria
-     * @return List of SelectOption objects containing role IDs and Persian captions
-     */
+
     public List<SelectOption> selectOptionsRoles(RoleSearchForm form) {
         // Create a specification based on the search form criteria
         final var specification = RoleSpecification.getSpecification(form);
@@ -48,6 +43,5 @@ public class RoleService {
                                 this.getPersianCaption(role)))
                 .toList();
     }
-/****************  e45c481736314583881d8cd214379749  ****************/
 
 }
