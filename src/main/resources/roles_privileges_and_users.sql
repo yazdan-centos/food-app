@@ -69,6 +69,8 @@ INSERT INTO roles_privileges (role_id, privilege_id) VALUES
 (3, 23); -- READ_PERSONNEL_PRIVILEGE
 
 -- Insert Users
+-- NOTE: For development/testing purposes only. All users use password: "password"
+-- In production, ensure unique, strong passwords for each user.
 INSERT INTO users (id, username, password, first_name, last_name, enabled, token_expired, account_locked, account_expired, credentials_expired) VALUES
 (1, 'admin', '$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG', 'Admin', 'User', true, false, false, false, false),
 (2, 'user', '$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG', 'Regular', 'User', true, false, false, false, false),
