@@ -1,6 +1,7 @@
 package com.mapnaom.foodapp.security.jwt;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
@@ -90,6 +91,10 @@ public class WebSecurityConfig {
     private final JwtUserDetailsService userDetailsService;
     private final JwtRequestFilter jwtRequestFilter;
 
+    // == Configurable CORS allowed origins (set via application.properties) ==
+    @Value("${app.cors.allowed-origins:http://localhost,http://localhost:3000,http://localhost:80}")
+    private List<String> allowedOrigins;
+
     // == Define Role Hierarchy with Privilege Inheritance ==
     @Bean
     public static RoleHierarchy roleHierarchy() {
@@ -133,8 +138,8 @@ public class WebSecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .securityMatcher("/api/**")
-//                .cors(cors -> cors.configurationSource(apiConfigurationSource()))
-                .cors(AbstractHttpConfigurer::disable)
+                // Enable CORS with custom configuration for Nginx reverse proxy
+                .cors(cors -> cors.configurationSource(apiConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PUBLIC_URLS).permitAll()
@@ -150,30 +155,43 @@ public class WebSecurityConfig {
     @Bean
     protected CorsConfigurationSource apiConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://141.11.1.27:3000", "141.11.1.27:3000")); // Set allowed origins
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH")); // Set allowed HTTP methods
-        configuration.setAllowedHeaders(List.of("*")); // Allow all headers
+
+        // Use configurable allowed origins from application.properties
+        // In a monolithic setup with Nginx reverse proxy, this should include the Nginx public IP/domain
+        configuration.setAllowedOrigins(allowedOrigins);
+
+        // Allow standard HTTP methods
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+
+        // Allow all headers (including Authorization for JWT)
+        configuration.setAllowedHeaders(Arrays.asList(
+                "Authorization",
+                "Content-Type",
+                "Accept",
+                "Origin",
+                "X-Requested-With",
+                "X-Forwarded-For",
+                "X-Forwarded-Proto",
+                "X-Forwarded-Host"
+        ));
+
+        // Expose headers that frontend might need to read
+        configuration.setExposedHeaders(Arrays.asList(
+                "Authorization",
+                "Content-Disposition"
+        ));
+
+        // Allow credentials (cookies, authorization headers)
+        configuration.setAllowCredentials(true);
+
+        // Cache preflight response for 1 hour
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Apply CORS settings to all API paths
+        source.registerCorsConfiguration("/api/**", configuration); // Apply CORS settings to API paths only
         return source;
     }
 
-//    @Autowired
-//    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth
-//                .ldapAuthentication()
-//                .userDnPatterns("uid={0},ou=people")
-//                .groupSearchBase("ou=groups")
-//                .contextSource()
-//                .url("ldap://localhost:9096/dc=springframework,dc=org")
-//                .and()
-//                .passwordCompare()
-//                .passwordEncoder(new BCryptPasswordEncoder())
-//                .passwordAttribute("userPassword");
-//    }
-
-    // == Security Expression Handler to Support Role Hierarchy in Annotations ==
     @Bean
     public DefaultWebSecurityExpressionHandler customWebSecurityExpressionHandler() {
         DefaultWebSecurityExpressionHandler expressionHandler = new DefaultWebSecurityExpressionHandler();

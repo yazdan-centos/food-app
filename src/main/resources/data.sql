@@ -1,159 +1,391 @@
--- Enable clean reruns
-TRUNCATE TABLE roles_privileges, users_roles, reservation, cost_shares, guest, daily_meal_dish, daily_meal, personnel, dish, users, role, privilege, cost_center, app_settings RESTART IDENTITY CASCADE;
+-- =====================================================
+-- data.sql - Database Initialization Script
+-- Rahkaran Util Application
+-- =====================================================
+-- This script initializes the database with default data
+-- including privileges, roles, users, dishes, personnel,
+-- daily meals, and reservations.
+-- =====================================================
 
--- === Privileges ===
-INSERT INTO privilege (id, name) VALUES
-  (nextval('privilege_seq'), 'CREATE_USER'),
-  (nextval('privilege_seq'), 'EDIT_USER'),
-  (nextval('privilege_seq'), 'DELETE_USER'),
-  (nextval('privilege_seq'), 'VIEW_USER'),
-  (nextval('privilege_seq'), 'CREATE_DAILY_MEAL'),
-  (nextval('privilege_seq'), 'EDIT_DAILY_MEAL'),
-  (nextval('privilege_seq'), 'DELETE_DAILY_MEAL'),
-  (nextval('privilege_seq'), 'VIEW_DAILY_MEAL'),
-  (nextval('privilege_seq'), 'CREATE_DISH'),
-  (nextval('privilege_seq'), 'EDIT_DISH'),
-  (nextval('privilege_seq'), 'DELETE_DISH'),
-  (nextval('privilege_seq'), 'VIEW_DISH'),
-  (nextval('privilege_seq'), 'VIEW_REPORTS'),
-  (nextval('privilege_seq'), 'MANAGE_SETTINGS'),
-  (nextval('privilege_seq'), 'MANAGE_CONTRACTORS'),
-  (nextval('privilege_seq'), 'CREATE_RESERVATION'),
-  (nextval('privilege_seq'), 'EDIT_OWN_RESERVATION'),
-  (nextval('privilege_seq'), 'CANCEL_OWN_RESERVATION'),
-  (nextval('privilege_seq'), 'VIEW_OWN_PROFILE'),
-  (nextval('privilege_seq'), 'EDIT_OWN_PROFILE'),
-  (nextval('privilege_seq'), 'UPDATE_DISH_AVAILABILITY'),
-  (nextval('privilege_seq'), 'VIEW_ORDERS_TO_PREPARE'),
-  (nextval('privilege_seq'), 'UPDATE_ORDER_STATUS');
+-- =====================================================
+-- 1. CREATE PRIVILEGES
+-- =====================================================
+INSERT INTO privilege (id, name) VALUES (1, 'CREATE_USER');
+INSERT INTO privilege (id, name) VALUES (2, 'EDIT_USER');
+INSERT INTO privilege (id, name) VALUES (3, 'DELETE_USER');
+INSERT INTO privilege (id, name) VALUES (4, 'VIEW_USER');
+INSERT INTO privilege (id, name) VALUES (5, 'CREATE_DAILY_MEAL');
+INSERT INTO privilege (id, name) VALUES (6, 'EDIT_DAILY_MEAL');
+INSERT INTO privilege (id, name) VALUES (7, 'DELETE_DAILY_MEAL');
+INSERT INTO privilege (id, name) VALUES (8, 'VIEW_DAILY_MEAL');
+INSERT INTO privilege (id, name) VALUES (9, 'CREATE_DISH');
+INSERT INTO privilege (id, name) VALUES (10, 'EDIT_DISH');
+INSERT INTO privilege (id, name) VALUES (11, 'DELETE_DISH');
+INSERT INTO privilege (id, name) VALUES (12, 'VIEW_DISH');
+INSERT INTO privilege (id, name) VALUES (13, 'VIEW_REPORTS');
+INSERT INTO privilege (id, name) VALUES (14, 'MANAGE_SETTINGS');
+INSERT INTO privilege (id, name) VALUES (15, 'MANAGE_CONTRACTORS');
+INSERT INTO privilege (id, name) VALUES (16, 'CREATE_RESERVATION');
+INSERT INTO privilege (id, name) VALUES (17, 'EDIT_OWN_RESERVATION');
+INSERT INTO privilege (id, name) VALUES (18, 'CANCEL_OWN_RESERVATION');
+INSERT INTO privilege (id, name) VALUES (19, 'VIEW_OWN_PROFILE');
+INSERT INTO privilege (id, name) VALUES (20, 'EDIT_OWN_PROFILE');
+INSERT INTO privilege (id, name) VALUES (21, 'UPDATE_DISH_AVAILABILITY');
+INSERT INTO privilege (id, name) VALUES (22, 'VIEW_ORDERS_TO_PREPARE');
+INSERT INTO privilege (id, name) VALUES (23, 'UPDATE_ORDER_STATUS');
 
--- === Roles ===
-INSERT INTO role (id, name) VALUES
-  (nextval('role_seq'), 'ROLE_ADMIN'),
-  (nextval('role_seq'), 'ROLE_USER'),
-  (nextval('role_seq'), 'ROLE_CONTRACTOR');
+-- =====================================================
+-- 2. CREATE ROLES
+-- =====================================================
+INSERT INTO role (id, name) VALUES (1, 'ROLE_ADMIN');
+INSERT INTO role (id, name) VALUES (2, 'ROLE_USER');
+INSERT INTO role (id, name) VALUES (3, 'ROLE_CONTRACTOR');
 
--- === Role ↔ Privilege mapping ===
--- Admin gets all privileges
-INSERT INTO roles_privileges (role_id, privilege_id)
-SELECT r.id, p.id FROM role r CROSS JOIN privilege p WHERE r.name = 'ROLE_ADMIN';
+-- =====================================================
+-- 3. ASSIGN PRIVILEGES TO ROLES
+-- =====================================================
 
--- User subset
-INSERT INTO roles_privileges (role_id, privilege_id)
-SELECT r.id, p.id FROM role r JOIN privilege p ON p.name IN (
-  'CREATE_RESERVATION','EDIT_OWN_RESERVATION','CANCEL_OWN_RESERVATION',
-  'VIEW_OWN_PROFILE','EDIT_OWN_PROFILE','VIEW_DAILY_MEAL'
-) WHERE r.name = 'ROLE_USER';
+-- ROLE_ADMIN gets all privileges (1-23)
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 1);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 2);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 3);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 4);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 5);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 6);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 7);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 8);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 9);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 10);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 11);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 12);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 13);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 14);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 15);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 16);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 17);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 18);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 19);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 20);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 21);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 22);
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (1, 23);
 
--- Contractor subset
-INSERT INTO roles_privileges (role_id, privilege_id)
-SELECT r.id, p.id FROM role r JOIN privilege p ON p.name IN (
-  'VIEW_DAILY_MEAL','VIEW_DISH','UPDATE_DISH_AVAILABILITY',
-  'VIEW_ORDERS_TO_PREPARE','UPDATE_ORDER_STATUS'
-) WHERE r.name = 'ROLE_CONTRACTOR';
+-- ROLE_USER privileges
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (2, 16); -- CREATE_RESERVATION
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (2, 17); -- EDIT_OWN_RESERVATION
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (2, 18); -- CANCEL_OWN_RESERVATION
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (2, 19); -- VIEW_OWN_PROFILE
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (2, 20); -- EDIT_OWN_PROFILE
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (2, 8);  -- VIEW_DAILY_MEAL
 
--- === Users ===
--- bcrypt hash for the literal password "password"
-INSERT INTO users (id, first_name, last_name, username, employee_code, password, enabled, token_expired, account_locked, account_expired, credentials_expired) VALUES
-  (nextval('users_seq'), 'admin', 'user', 'admin', NULL, '{bcrypt}$2a$10$7EqJtq98hPqEX7fNZaFWoOQ5zL.KhO6Uq1bR7lQ0WAW7v1/uuOeWy', true, false, false, false, false),
-  (nextval('users_seq'), 'Seyed Mohammad', 'Adibi Vala', 'adibi_m', NULL, '{bcrypt}$2a$10$7EqJtq98hPqEX7fNZaFWoOQ5zL.KhO6Uq1bR7lQ0WAW7v1/uuOeWy', true, false, false, false, false),
-  (nextval('users_seq'), 'Masoud', 'Dalaei', 'dalaei_m', NULL, '{bcrypt}$2a$10$7EqJtq98hPqEX7fNZaFWoOQ5zL.KhO6Uq1bR7lQ0WAW7v1/uuOeWy', true, false, false, false, false),
-  (nextval('users_seq'), 'Mahdi', 'Mazloumi Gol', 'mazloumi_m', NULL, '{bcrypt}$2a$10$7EqJtq98hPqEX7fNZaFWoOQ5zL.KhO6Uq1bR7lQ0WAW7v1/uuOeWy', true, false, false, false, false),
-  (nextval('users_seq'), 'Mohammad', 'Esmaeil Pourganji', 'esmaeili_m', NULL, '{bcrypt}$2a$10$7EqJtq98hPqEX7fNZaFWoOQ5zL.KhO6Uq1bR7lQ0WAW7v1/uuOeWy', true, false, false, false, false),
-  (nextval('users_seq'), 'Rasoul', 'Ghanbari', 'ghanbari_m', NULL, '{bcrypt}$2a$10$7EqJtq98hPqEX7fNZaFWoOQ5zL.KhO6Uq1bR7lQ0WAW7v1/uuOeWy', true, false, false, false, false),
-  (nextval('users_seq'), 'Ali', 'Kholousi', 'kholusi_m', NULL, '{bcrypt}$2a$10$7EqJtq98hPqEX7fNZaFWoOQ5zL.KhO6Uq1bR7lQ0WAW7v1/uuOeWy', true, false, false, false, false),
-  (nextval('users_seq'), 'Javad', 'Bakhshi', 'bakhshi_j', NULL, '{bcrypt}$2a$10$7EqJtq98hPqEX7fNZaFWoOQ5zL.KhO6Uq1bR7lQ0WAW7v1/uuOeWy', true, false, false, false, false),
-  (nextval('users_seq'), 'Mahdi', 'Moshiri', 'moshiri_m', NULL, '{bcrypt}$2a$10$7EqJtq98hPqEX7fNZaFWoOQ5zL.KhO6Uq1bR7lQ0WAW7v1/uuOeWy', true, false, false, false, false),
-  (nextval('users_seq'), 'Asghar', 'Hossein Abadi', 'hoseinabadi_m', NULL, '{bcrypt}$2a$10$7EqJtq98hPqEX7fNZaFWoOQ5zL.KhO6Uq1bR7lQ0WAW7v1/uuOeWy', true, false, false, false, false),
-  (nextval('users_seq'), 'Amir Saleh', 'Habibi Khorasani', 'habibi_a', NULL, '{bcrypt}$2a$10$7EqJtq98hPqEX7fNZaFWoOQ5zL.KhO6Uq1bR7lQ0WAW7v1/uuOeWy', true, false, false, false, false);
+-- ROLE_CONTRACTOR privileges
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (3, 8);  -- VIEW_DAILY_MEAL
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (3, 12); -- VIEW_DISH
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (3, 21); -- UPDATE_DISH_AVAILABILITY
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (3, 22); -- VIEW_ORDERS_TO_PREPARE
+INSERT INTO roles_privileges (role_id, privilege_id) VALUES (3, 23); -- UPDATE_ORDER_STATUS
 
--- User ↔ Role mapping
-INSERT INTO users_roles (role_id, user_id)
-SELECT r.id, u.id FROM role r JOIN users u ON r.name = 'ROLE_ADMIN' AND u.username = 'admin';
-INSERT INTO users_roles (role_id, user_id)
-SELECT r.id, u.id FROM role r JOIN users u ON r.name = 'ROLE_USER' AND u.username <> 'admin';
+-- =====================================================
+-- 4. CREATE USERS
+-- =====================================================
+-- Password for all users is BCrypt encoded 'password': $2a$10$N9qo8uLOickgx2ZMRZoMy.MqRqTyD/MwKNqW3S1H4qzJvZB3g3Y/K
+-- Note: This is a sample BCrypt hash. In production, generate a proper hash.
 
--- === Personnel ===
-INSERT INTO personnel (username, password, pers_code, first_name, last_name) VALUES
- ('habibi_a','123','80262','امیر صالح','حبیبی خراسانی'),
- ('adibi_m','123','80252','سید محمد','ادیبی والا'),
- ('dalaei_m','123','80259','مسعود','دالائی'),
- ('mazloumi_m','123','80306','مهدی','مظلومی گل'),
- ('esmaeili_m','123','80248','محمد','اسماعیل پورگنجی'),
- ('ghanbari_m','123','80891','رسول','قنبری'),
- ('kholusi_m','123','42583','علی','خلوصی'),
- ('bakhshi_j','123','80179','جواد','بخشی'),
- ('moshiri_m','123','80236','مهدی','مشیری'),
- ('hoseinabadi_m','123','80254','اصغر','حسین آبادی');
+-- Admin user
+INSERT INTO users (id, username, password, first_name, last_name, enabled, token_expired, account_locked, account_expired, credentials_expired, employee_code)
+VALUES (1, 'admin', '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqRqTyD/MwKNqW3S1H4qzJvZB3g3Y/K', 'admin', 'user', true, false, false, false, false, NULL);
 
--- === Dishes ===
-INSERT INTO dish (name, price) VALUES
- ('یتیمچه', 25000), ('کشک بادمجان', 24000), ('کله جوش', 23000), ('تاس کباب یزدی', 26000),
- ('اشکنه', 20000), ('خوراک کنگر', 27000), ('خوراک کدو', 22000), ('خوراک فصل', 23000),
- ('خوراک قیمه', 28000), ('چی کوفته', 24000), ('کباب قارچ', 26000),
- ('خوراک جگر گوسفندی', 32000), ('خوراک میگو', 35000), ('خوراک بادمجان', 23000),
- ('نیخود آب', 20000), ('خوراک لوبیا', 21000), ('بریانی', 33000), ('میرزا قاسمی', 26000),
- ('واویشکا', 25000), ('نون و پنیر و سبزیجات', 18000), ('آش کارده', 19000),
- ('حلیم', 22000), ('کره و مربا', 17000);
+-- Sample users
+INSERT INTO users (id, username, password, first_name, last_name, enabled, token_expired, account_locked, account_expired, credentials_expired, employee_code)
+VALUES (2, 'adibi_m', '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqRqTyD/MwKNqW3S1H4qzJvZB3g3Y/K', 'Seyed Mohammad', 'Adibi Vala', true, false, false, false, false, NULL);
 
--- === App settings (singleton) ===
-INSERT INTO app_settings (id, food_prices_active, company_name, address, phone, version, employee_price_share, employer_price_share, reservation_hour, reservation_minute)
-VALUES (1, true, 'Demo Company', 'Demo Address', '000-0000', 1, 30, 70, 10, 0);
+INSERT INTO users (id, username, password, first_name, last_name, enabled, token_expired, account_locked, account_expired, credentials_expired, employee_code)
+VALUES (3, 'dalaei_m', '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqRqTyD/MwKNqW3S1H4qzJvZB3g3Y/K', 'Masoud', 'Dalaei', true, false, false, false, false, NULL);
 
--- === Cost center (for potential guests) ===
-INSERT INTO cost_center (name) VALUES ('Default Cost Center');
+INSERT INTO users (id, username, password, first_name, last_name, enabled, token_expired, account_locked, account_expired, credentials_expired, employee_code)
+VALUES (4, 'mazloumi_m', '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqRqTyD/MwKNqW3S1H4qzJvZB3g3Y/K', 'Mahdi', 'Mazloumi Gol', true, false, false, false, false, NULL);
 
--- === Daily meals (3 working days) ===
--- Gregorian: 2025-04-07, 2025-04-08, 2025-04-09
--- Jalali:    1404-01-18, 1404-01-19, 1404-01-20
-INSERT INTO daily_meal (meal_date, jalali_month, jalali_day, jalali_year) VALUES
- ('2025-04-07', 1, 18, 1404),
- ('2025-04-08', 1, 19, 1404),
- ('2025-04-09', 1, 20, 1404);
+INSERT INTO users (id, username, password, first_name, last_name, enabled, token_expired, account_locked, account_expired, credentials_expired, employee_code)
+VALUES (5, 'esmaeili_m', '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqRqTyD/MwKNqW3S1H4qzJvZB3g3Y/K', 'Mohammad', 'Esmaeil Pourganji', true, false, false, false, false, NULL);
 
--- === Daily meal dishes (3 per day) ===
-INSERT INTO daily_meal_dish (daily_meal_id, dish_id)
-SELECT dm.id, d.id FROM daily_meal dm JOIN dish d ON dm.meal_date = '2025-04-07' AND d.name IN ('یتیمچه','کشک بادمجان','کله جوش');
-INSERT INTO daily_meal_dish (daily_meal_id, dish_id)
-SELECT dm.id, d.id FROM daily_meal dm JOIN dish d ON dm.meal_date = '2025-04-08' AND d.name IN ('خوراک قیمه','کباب قارچ','بریانی');
-INSERT INTO daily_meal_dish (daily_meal_id, dish_id)
-SELECT dm.id, d.id FROM daily_meal dm JOIN dish d ON dm.meal_date = '2025-04-09' AND d.name IN ('میرزا قاسمی','واویشکا','حلیم');
+INSERT INTO users (id, username, password, first_name, last_name, enabled, token_expired, account_locked, account_expired, credentials_expired, employee_code)
+VALUES (6, 'ghanbari_m', '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqRqTyD/MwKNqW3S1H4qzJvZB3g3Y/K', 'Rasoul', 'Ghanbari', true, false, false, false, false, NULL);
 
--- === Reservations (sample) ===
--- Reservation status set to 'CREATED'
-INSERT INTO reservation (personnel_id, daily_meal_id, daily_meal_dish_id, reservation_time, reservation_status)
-SELECT p.id, dm.id, dmd.id, NOW(), 'CREATED'
-FROM personnel p
-JOIN daily_meal dm ON dm.meal_date = '2025-04-07'
-JOIN daily_meal_dish dmd ON dmd.daily_meal_id = dm.id
-JOIN dish d ON d.id = dmd.dish_id AND d.name = 'یتیمچه'
-WHERE p.username = 'habibi_a';
+INSERT INTO users (id, username, password, first_name, last_name, enabled, token_expired, account_locked, account_expired, credentials_expired, employee_code)
+VALUES (7, 'kholusi_m', '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqRqTyD/MwKNqW3S1H4qzJvZB3g3Y/K', 'Ali', 'Kholousi', true, false, false, false, false, NULL);
 
-INSERT INTO reservation (personnel_id, daily_meal_id, daily_meal_dish_id, reservation_time, reservation_status)
-SELECT p.id, dm.id, dmd.id, NOW(), 'CREATED'
-FROM personnel p
-JOIN daily_meal dm ON dm.meal_date = '2025-04-08'
-JOIN daily_meal_dish dmd ON dmd.daily_meal_id = dm.id
-JOIN dish d ON d.id = dmd.dish_id AND d.name = 'کباب قارچ'
-WHERE p.username = 'adibi_m';
+INSERT INTO users (id, username, password, first_name, last_name, enabled, token_expired, account_locked, account_expired, credentials_expired, employee_code)
+VALUES (8, 'bakhshi_j', '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqRqTyD/MwKNqW3S1H4qzJvZB3g3Y/K', 'Javad', 'Bakhshi', true, false, false, false, false, NULL);
 
-INSERT INTO reservation (personnel_id, daily_meal_id, daily_meal_dish_id, reservation_time, reservation_status)
-SELECT p.id, dm.id, dmd.id, NOW(), 'CREATED'
-FROM personnel p
-JOIN daily_meal dm ON dm.meal_date = '2025-04-09'
-JOIN daily_meal_dish dmd ON dmd.daily_meal_id = dm.id
-JOIN dish d ON d.id = dmd.dish_id AND d.name = 'حلیم'
-WHERE p.username = 'dalaei_m';
+INSERT INTO users (id, username, password, first_name, last_name, enabled, token_expired, account_locked, account_expired, credentials_expired, employee_code)
+VALUES (9, 'moshiri_m', '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqRqTyD/MwKNqW3S1H4qzJvZB3g3Y/K', 'Mahdi', 'Moshiri', true, false, false, false, false, NULL);
 
--- === Cost shares (30% employee / 70% employer from app_settings) ===
-INSERT INTO cost_shares (employee_portion, employee_share_percentage, employer_portion, quantity, total_cost, reservation_id)
-SELECT
-  ROUND(d.price * 0.30, 2) AS employee_portion,
-  30.00 AS employee_share_percentage,
-  ROUND(d.price * 0.70, 2) AS employer_portion,
-  1 AS quantity,
-  d.price AS total_cost,
-  r.id AS reservation_id
-FROM reservation r
-JOIN daily_meal_dish dmd ON r.daily_meal_dish_id = dmd.id
-JOIN dish d ON dmd.dish_id = d.id;
+INSERT INTO users (id, username, password, first_name, last_name, enabled, token_expired, account_locked, account_expired, credentials_expired, employee_code)
+VALUES (10, 'hoseinabadi_m', '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqRqTyD/MwKNqW3S1H4qzJvZB3g3Y/K', 'Asghar', 'Hossein Abadi', true, false, false, false, false, NULL);
+
+INSERT INTO users (id, username, password, first_name, last_name, enabled, token_expired, account_locked, account_expired, credentials_expired, employee_code)
+VALUES (11, 'habibi_a', '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqRqTyD/MwKNqW3S1H4qzJvZB3g3Y/K', 'Amir Saleh', 'Habibi Khorasani', true, false, false, false, false, NULL);
+
+-- =====================================================
+-- 5. ASSIGN ROLES TO USERS
+-- =====================================================
+INSERT INTO users_roles (user_id, role_id) VALUES (1, 1);  -- admin has ROLE_ADMIN
+INSERT INTO users_roles (user_id, role_id) VALUES (2, 2);  -- adibi_m has ROLE_USER
+INSERT INTO users_roles (user_id, role_id) VALUES (3, 2);  -- dalaei_m has ROLE_USER
+INSERT INTO users_roles (user_id, role_id) VALUES (4, 2);  -- mazloumi_m has ROLE_USER
+INSERT INTO users_roles (user_id, role_id) VALUES (5, 2);  -- esmaeili_m has ROLE_USER
+INSERT INTO users_roles (user_id, role_id) VALUES (6, 2);  -- ghanbari_m has ROLE_USER
+INSERT INTO users_roles (user_id, role_id) VALUES (7, 2);  -- kholusi_m has ROLE_USER
+INSERT INTO users_roles (user_id, role_id) VALUES (8, 2);  -- bakhshi_j has ROLE_USER
+INSERT INTO users_roles (user_id, role_id) VALUES (9, 2);  -- moshiri_m has ROLE_USER
+INSERT INTO users_roles (user_id, role_id) VALUES (10, 2); -- hoseinabadi_m has ROLE_USER
+INSERT INTO users_roles (user_id, role_id) VALUES (11, 2); -- habibi_a has ROLE_USER
+
+-- =====================================================
+-- 6. CREATE DISHES
+-- =====================================================
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (1, 'یتیمچه', 22500, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (2, 'کشک بادمجان', 18000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (3, 'کله جوش', 25000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (4, 'تاس کباب یزدی', 28000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (5, 'اشکنه', 17500, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (6, 'خوراک کنگر', 20000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (7, 'خوراک کدو', 16000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (8, 'خوراک فصل', 19500, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (9, 'خوراک قیمه', 24000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (10, 'چی کوفته', 26000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (11, 'کباب قارچ', 21000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (12, 'خوراک جگر گوسفندی', 27000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (13, 'خوراک میگو', 30000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (14, 'خوراک بادمجان', 18500, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (15, 'نیخود آب', 15000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (16, 'خوراک لوبیا', 17000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (17, 'بریانی', 29000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (18, 'میرزا قاسمی', 19000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (19, 'واویشکا', 23000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (20, 'نون و پنیر و سبزیجات', 15000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (21, 'آش کارده', 16500, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (22, 'حلیم', 20000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO dish (id, name, price, created_at, last_modified_at) VALUES (23, 'کره و مربا', 15000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- =====================================================
+-- 7. CREATE PERSONNEL
+-- =====================================================
+INSERT INTO personnel (id, pers_code, username, password, first_name, last_name, created_at, last_modified_at)
+VALUES (1, '80262', 'habibi_a', '123', 'امیر صالح', 'حبیبی خراسانی', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO personnel (id, pers_code, username, password, first_name, last_name, created_at, last_modified_at)
+VALUES (2, '80252', 'adibi_m', '123', 'سید محمد', 'ادیبی والا', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO personnel (id, pers_code, username, password, first_name, last_name, created_at, last_modified_at)
+VALUES (3, '80259', 'dalaei_m', '123', 'مسعود', 'دالائی', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO personnel (id, pers_code, username, password, first_name, last_name, created_at, last_modified_at)
+VALUES (4, '80306', 'mazloumi_m', '123', 'مهدی', 'مظلومی گل', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO personnel (id, pers_code, username, password, first_name, last_name, created_at, last_modified_at)
+VALUES (5, '80248', 'esmaeili_m', '123', 'محمد', 'اسماعیل پورگنجی', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO personnel (id, pers_code, username, password, first_name, last_name, created_at, last_modified_at)
+VALUES (6, '80891', 'ghanbari_m', '123', 'رسول', 'قنبری', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO personnel (id, pers_code, username, password, first_name, last_name, created_at, last_modified_at)
+VALUES (7, '42583', 'kholusi_m', '123', 'علی', 'خلوصی', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO personnel (id, pers_code, username, password, first_name, last_name, created_at, last_modified_at)
+VALUES (8, '80179', 'bakhshi_j', '123', 'جواد', 'بخشی', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO personnel (id, pers_code, username, password, first_name, last_name, created_at, last_modified_at)
+VALUES (9, '80236', 'moshiri_m', '123', 'مهدی', 'مشیری', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO personnel (id, pers_code, username, password, first_name, last_name, created_at, last_modified_at)
+VALUES (10, '80254', 'hoseinabadi_m', '123', 'اصغر', 'حسین آبادی', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- =====================================================
+-- 8. CREATE APP SETTINGS (Singleton)
+-- =====================================================
+INSERT INTO app_settings (id, food_prices_active, employee_price_share, employer_price_share, reservation_hour, reservation_minute, company_name, address, phone, version, created_at, last_modified_at)
+VALUES (1, true, 30, 70, 10, 0, 'شرکت مپنا', 'تهران، ایران', '021-12345678', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+ON CONFLICT (id) DO NOTHING;
+
+-- =====================================================
+-- 9. CREATE SAMPLE DAILY MEALS (for the current week)
+-- =====================================================
+-- Note: Jalali dates are calculated based on the Gregorian date 2025-04-03 to 2025-04-10
+-- Using sample dates: 2025-04-05 (Saturday), 2025-04-06 (Sunday), 2025-04-07 (Monday), 2025-04-08 (Tuesday), 2025-04-09 (Wednesday)
+
+-- Sample daily meals for a week (skipping Thursday and Friday which are weekends in Iran)
+INSERT INTO daily_meal (id, meal_date, jalali_year, jalali_month, jalali_day, created_at, last_modified_at)
+VALUES (1, '2025-04-05', 1404, 1, 16, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO daily_meal (id, meal_date, jalali_year, jalali_month, jalali_day, created_at, last_modified_at)
+VALUES (2, '2025-04-06', 1404, 1, 17, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO daily_meal (id, meal_date, jalali_year, jalali_month, jalali_day, created_at, last_modified_at)
+VALUES (3, '2025-04-07', 1404, 1, 18, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO daily_meal (id, meal_date, jalali_year, jalali_month, jalali_day, created_at, last_modified_at)
+VALUES (4, '2025-04-08', 1404, 1, 19, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO daily_meal (id, meal_date, jalali_year, jalali_month, jalali_day, created_at, last_modified_at)
+VALUES (5, '2025-04-09', 1404, 1, 20, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO daily_meal (id, meal_date, jalali_year, jalali_month, jalali_day, created_at, last_modified_at)
+VALUES (6, '2025-04-12', 1404, 1, 23, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO daily_meal (id, meal_date, jalali_year, jalali_month, jalali_day, created_at, last_modified_at)
+VALUES (7, '2025-04-13', 1404, 1, 24, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO daily_meal (id, meal_date, jalali_year, jalali_month, jalali_day, created_at, last_modified_at)
+VALUES (8, '2025-04-14', 1404, 1, 25, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO daily_meal (id, meal_date, jalali_year, jalali_month, jalali_day, created_at, last_modified_at)
+VALUES (9, '2025-04-15', 1404, 1, 26, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO daily_meal (id, meal_date, jalali_year, jalali_month, jalali_day, created_at, last_modified_at)
+VALUES (10, '2025-04-16', 1404, 1, 27, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- =====================================================
+-- 10. CREATE DAILY MEAL DISHES (3 dishes per daily meal)
+-- =====================================================
+-- Daily Meal 1 (2025-04-05)
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (1, 1, 1);
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (2, 1, 5);
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (3, 1, 9);
+
+-- Daily Meal 2 (2025-04-06)
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (4, 2, 2);
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (5, 2, 6);
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (6, 2, 10);
+
+-- Daily Meal 3 (2025-04-07)
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (7, 3, 3);
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (8, 3, 7);
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (9, 3, 11);
+
+-- Daily Meal 4 (2025-04-08)
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (10, 4, 4);
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (11, 4, 8);
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (12, 4, 12);
+
+-- Daily Meal 5 (2025-04-09)
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (13, 5, 13);
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (14, 5, 14);
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (15, 5, 15);
+
+-- Daily Meal 6 (2025-04-12)
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (16, 6, 16);
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (17, 6, 17);
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (18, 6, 18);
+
+-- Daily Meal 7 (2025-04-13)
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (19, 7, 19);
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (20, 7, 20);
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (21, 7, 21);
+
+-- Daily Meal 8 (2025-04-14)
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (22, 8, 22);
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (23, 8, 23);
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (24, 8, 1);
+
+-- Daily Meal 9 (2025-04-15)
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (25, 9, 2);
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (26, 9, 3);
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (27, 9, 4);
+
+-- Daily Meal 10 (2025-04-16)
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (28, 10, 5);
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (29, 10, 6);
+INSERT INTO daily_meal_dish (id, daily_meal_id, dish_id) VALUES (30, 10, 7);
+
+-- =====================================================
+-- 11. CREATE SAMPLE RESERVATIONS (for first 5 personnel for first 5 days)
+-- =====================================================
+-- Reservation for Personnel 1 (habibi_a) - Day 1
+INSERT INTO reservation (id, personnel_id, daily_meal_id, daily_meal_dish_id, reservation_time, reservation_status, created_at, last_modified_at)
+VALUES (1, 1, 1, 1, CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO cost_shares (id, reservation_id, quantity, total_cost, employee_portion, employer_portion, employee_share_percentage)
+VALUES (1, 1, 1, 22500.00, 6750.00, 15750.00, 30.00);
+
+-- Reservation for Personnel 2 (adibi_m) - Day 1
+INSERT INTO reservation (id, personnel_id, daily_meal_id, daily_meal_dish_id, reservation_time, reservation_status, created_at, last_modified_at)
+VALUES (2, 2, 1, 2, CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO cost_shares (id, reservation_id, quantity, total_cost, employee_portion, employer_portion, employee_share_percentage)
+VALUES (2, 2, 1, 17500.00, 5250.00, 12250.00, 30.00);
+
+-- Reservation for Personnel 3 (dalaei_m) - Day 1
+INSERT INTO reservation (id, personnel_id, daily_meal_id, daily_meal_dish_id, reservation_time, reservation_status, created_at, last_modified_at)
+VALUES (3, 3, 1, 3, CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO cost_shares (id, reservation_id, quantity, total_cost, employee_portion, employer_portion, employee_share_percentage)
+VALUES (3, 3, 1, 24000.00, 7200.00, 16800.00, 30.00);
+
+-- Reservation for Personnel 4 (mazloumi_m) - Day 2
+INSERT INTO reservation (id, personnel_id, daily_meal_id, daily_meal_dish_id, reservation_time, reservation_status, created_at, last_modified_at)
+VALUES (4, 4, 2, 4, CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO cost_shares (id, reservation_id, quantity, total_cost, employee_portion, employer_portion, employee_share_percentage)
+VALUES (4, 4, 1, 18000.00, 5400.00, 12600.00, 30.00);
+
+-- Reservation for Personnel 5 (esmaeili_m) - Day 2
+INSERT INTO reservation (id, personnel_id, daily_meal_id, daily_meal_dish_id, reservation_time, reservation_status, created_at, last_modified_at)
+VALUES (5, 5, 2, 5, CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO cost_shares (id, reservation_id, quantity, total_cost, employee_portion, employer_portion, employee_share_percentage)
+VALUES (5, 5, 1, 20000.00, 6000.00, 14000.00, 30.00);
+
+-- Reservation for Personnel 6 (ghanbari_m) - Day 3
+INSERT INTO reservation (id, personnel_id, daily_meal_id, daily_meal_dish_id, reservation_time, reservation_status, created_at, last_modified_at)
+VALUES (6, 6, 3, 7, CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO cost_shares (id, reservation_id, quantity, total_cost, employee_portion, employer_portion, employee_share_percentage)
+VALUES (6, 6, 1, 25000.00, 7500.00, 17500.00, 30.00);
+
+-- Reservation for Personnel 7 (kholusi_m) - Day 3
+INSERT INTO reservation (id, personnel_id, daily_meal_id, daily_meal_dish_id, reservation_time, reservation_status, created_at, last_modified_at)
+VALUES (7, 7, 3, 8, CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO cost_shares (id, reservation_id, quantity, total_cost, employee_portion, employer_portion, employee_share_percentage)
+VALUES (7, 7, 1, 16000.00, 4800.00, 11200.00, 30.00);
+
+-- Reservation for Personnel 8 (bakhshi_j) - Day 4
+INSERT INTO reservation (id, personnel_id, daily_meal_id, daily_meal_dish_id, reservation_time, reservation_status, created_at, last_modified_at)
+VALUES (8, 8, 4, 10, CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO cost_shares (id, reservation_id, quantity, total_cost, employee_portion, employer_portion, employee_share_percentage)
+VALUES (8, 8, 1, 28000.00, 8400.00, 19600.00, 30.00);
+
+-- Reservation for Personnel 9 (moshiri_m) - Day 4
+INSERT INTO reservation (id, personnel_id, daily_meal_id, daily_meal_dish_id, reservation_time, reservation_status, created_at, last_modified_at)
+VALUES (9, 9, 4, 11, CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO cost_shares (id, reservation_id, quantity, total_cost, employee_portion, employer_portion, employee_share_percentage)
+VALUES (9, 9, 1, 19500.00, 5850.00, 13650.00, 30.00);
+
+-- Reservation for Personnel 10 (hoseinabadi_m) - Day 5
+INSERT INTO reservation (id, personnel_id, daily_meal_id, daily_meal_dish_id, reservation_time, reservation_status, created_at, last_modified_at)
+VALUES (10, 10, 5, 13, CURRENT_TIMESTAMP, 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO cost_shares (id, reservation_id, quantity, total_cost, employee_portion, employer_portion, employee_share_percentage)
+VALUES (10, 10, 1, 30000.00, 9000.00, 21000.00, 30.00);
+
+-- =====================================================
+-- 12. UPDATE SEQUENCES (for PostgreSQL)
+-- =====================================================
+-- Uncomment these lines if using PostgreSQL to update sequences after manual inserts
+SELECT setval('privilege_id_seq', (SELECT MAX(id) FROM privilege));
+SELECT setval('role_id_seq', (SELECT MAX(id) FROM role));
+SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
+SELECT setval('dish_id_seq', (SELECT MAX(id) FROM dish));
+SELECT setval('personnel_id_seq', (SELECT MAX(id) FROM personnel));
+SELECT setval('daily_meal_id_seq', (SELECT MAX(id) FROM daily_meal));
+SELECT setval('daily_meal_dish_id_seq', (SELECT MAX(id) FROM daily_meal_dish));
+SELECT setval('reservation_id_seq', (SELECT MAX(id) FROM reservation));
+SELECT setval('cost_shares_id_seq', (SELECT MAX(id) FROM cost_shares));
+
+-- =====================================================
+-- END OF INITIALIZATION SCRIPT
+-- =====================================================
+
