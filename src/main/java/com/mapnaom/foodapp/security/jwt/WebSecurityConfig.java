@@ -95,44 +95,105 @@ public class WebSecurityConfig {
     @Value("${app.cors.allowed-origins:http://localhost,http://localhost:3000,http://localhost:80}")
     private List<String> allowedOrigins;
 
-    // == Define Role Hierarchy with Privilege Inheritance ==
+    /**
+     * Defines the role hierarchy with privilege inheritance.
+     * Higher roles automatically inherit all privileges of lower roles.
+     * Hierarchy structure:
+     * - ADMIN: Has all privileges (user, meal, dish management, reports, settings)
+     * - STAFF: Kitchen/staff operations (orders, dish availability) + user privileges
+     * - USER: Basic customer operations (view items, manage own profile and reservations)
+     * - GUEST: Read-only access (view dishes and daily meals)
+     */
     @Bean
-    public static RoleHierarchy roleHierarchy() {
-        return RoleHierarchyImpl.fromHierarchy(
-                ("%s > " +
-                        "%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s\n%s >" +
-                        " %s %s %s %s %s %s %s %s %s %s\n%s > %s %s %s %s %s %s %s\n%s > %s %s")
-                        .formatted(ADMIN, CREATE_USER, EDIT_USER, DELETE_USER, VIEW_USER, CREATE_DAILY_MEAL,
-                                EDIT_DAILY_MEAL, DELETE_DAILY_MEAL, VIEW_DAILY_MEAL, CREATE_DISH, EDIT_DISH,
-                                DELETE_DISH, VIEW_DISH, VIEW_REPORTS, MANAGE_SETTINGS, MANAGE_CONTRACTORS,
-                                UPDATE_DISH_AVAILABILITY, VIEW_ORDERS_TO_PREPARE, UPDATE_ORDER_STATUS,
-                                VIEW_OWN_PROFILE, EDIT_OWN_PROFILE, CREATE_RESERVATION, EDIT_OWN_RESERVATION,
-                                CANCEL_OWN_RESERVATION, STAFF, VIEW_DAILY_MEAL, VIEW_DISH, UPDATE_DISH_AVAILABILITY,
-                                VIEW_ORDERS_TO_PREPARE, UPDATE_ORDER_STATUS, VIEW_OWN_PROFILE, EDIT_OWN_PROFILE,
-                                CREATE_RESERVATION, EDIT_OWN_RESERVATION, CANCEL_OWN_RESERVATION, USER, VIEW_DISH,
-                                VIEW_DAILY_MEAL, VIEW_OWN_PROFILE, EDIT_OWN_PROFILE, CREATE_RESERVATION,
-                                EDIT_OWN_RESERVATION, CANCEL_OWN_RESERVATION, GUEST, VIEW_DISH, VIEW_DAILY_MEAL)
+    public RoleHierarchy roleHierarchy() {
+        // Build hierarchy string with proper formatting for readability
+        String hierarchyDefinition = buildRoleHierarchy();
+        return RoleHierarchyImpl.fromHierarchy(hierarchyDefinition);
+    }
+
+    /**
+     * Constructs the role hierarchy definition string.
+     * Each role inherits all privileges from roles below it in the hierarchy.
+     */
+    private String buildRoleHierarchy() {
+        // ADMIN privileges (full system access)
+        String adminPrivileges = String.join(" ",
+                CREATE_USER, EDIT_USER, DELETE_USER, VIEW_USER,
+                CREATE_DAILY_MEAL, EDIT_DAILY_MEAL, DELETE_DAILY_MEAL, VIEW_DAILY_MEAL,
+                CREATE_DISH, EDIT_DISH, DELETE_DISH, VIEW_DISH,
+                VIEW_REPORTS, MANAGE_SETTINGS, MANAGE_CONTRACTORS,
+                UPDATE_DISH_AVAILABILITY, VIEW_ORDERS_TO_PREPARE, UPDATE_ORDER_STATUS,
+                VIEW_OWN_PROFILE, EDIT_OWN_PROFILE,
+                CREATE_RESERVATION, EDIT_OWN_RESERVATION, CANCEL_OWN_RESERVATION
+        );
+
+        // STAFF privileges (kitchen/operational access + user privileges)
+        String staffPrivileges = String.join(" ",
+                VIEW_DAILY_MEAL, VIEW_DISH,
+                UPDATE_DISH_AVAILABILITY, VIEW_ORDERS_TO_PREPARE, UPDATE_ORDER_STATUS,
+                VIEW_OWN_PROFILE, EDIT_OWN_PROFILE,
+                CREATE_RESERVATION, EDIT_OWN_RESERVATION, CANCEL_OWN_RESERVATION
+        );
+
+        // USER privileges (customer operations)
+        String userPrivileges = String.join(" ",
+                VIEW_DISH, VIEW_DAILY_MEAL,
+                VIEW_OWN_PROFILE, EDIT_OWN_PROFILE,
+                CREATE_RESERVATION, EDIT_OWN_RESERVATION, CANCEL_OWN_RESERVATION
+        );
+
+        // GUEST privileges (read-only access)
+        String guestPrivileges = String.join(" ",
+                VIEW_DISH, VIEW_DAILY_MEAL
+        );
+
+        // Construct the hierarchy: ADMIN > privileges\nSTAFF > privileges\n...
+        return String.format(
+                "%s > %s\n%s > %s\n%s > %s\n%s > %s",
+                ADMIN, adminPrivileges,
+                STAFF, staffPrivileges,
+                USER, userPrivileges,
+                GUEST, guestPrivileges
         );
     }
 
+    /**
+     * Password encoder bean for securing user passwords.
+     * Uses BCrypt hashing algorithm with default strength (10 rounds).
+     */
     @Bean
-    protected BCryptPasswordEncoder bCryptPasswordEncoder() {
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Configures the authentication provider with user details service and password encoder.
+     */
     @Bean
     public AuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService); // your custom service
+        provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(bCryptPasswordEncoder());
         return provider;
     }
 
+    /**
+     * Provides the authentication manager from Spring Security's configuration.
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
+    /**
+     * Configures the main security filter chain with JWT authentication.
+     * Sets up:
+     * - CSRF protection (disabled for stateless JWT API)
+     * - CORS configuration for cross-origin requests
+     * - Stateless session management
+     * - Public and protected endpoint authorization
+     * - JWT authentication filter
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -146,12 +207,22 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/v1/auth/logout", "/api/v1/auth/validate").authenticated()
                         .anyRequest().authenticated()
                 )
-                .authenticationProvider(daoAuthenticationProvider()) // <== Register DAO provider here
+                .authenticationProvider(daoAuthenticationProvider())
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
+    /**
+     * Configures CORS (Cross-Origin Resource Sharing) for the API.
+     * Allows requests from configured origins (typically Nginx reverse proxy).
+     * Settings:
+     * - Allowed origins: Configurable via application.properties
+     * - Allowed methods: GET, POST, PUT, DELETE, PATCH, OPTIONS
+     * - Allowed headers: Authorization, Content-Type, etc.
+     * - Credentials: Enabled for cookie/auth header support
+     * - Max age: 1 hour preflight cache
+     */
     @Bean
     protected CorsConfigurationSource apiConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -192,6 +263,10 @@ public class WebSecurityConfig {
         return source;
     }
 
+    /**
+     * Configures the web security expression handler with role hierarchy support.
+     * This allows hierarchical role checking in security expressions.
+     */
     @Bean
     public DefaultWebSecurityExpressionHandler customWebSecurityExpressionHandler() {
         DefaultWebSecurityExpressionHandler expressionHandler = new DefaultWebSecurityExpressionHandler();
