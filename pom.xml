@@ -33,7 +33,7 @@
         <poi.version>5.2.3</poi.version>
         <jjwt.version>0.11.5</jjwt.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <lombok.version>1.18.34</lombok.version>
+        <lombok.version>1.18.28</lombok.version>
         <jetbrains-annotations.version>24.0.1</jetbrains-annotations.version>
         <swagger-annotations.version>2.2.8</swagger-annotations.version>
     </properties>
