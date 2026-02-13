@@ -205,7 +205,16 @@ echo "    Configuring database..."
 cd /tmp
 
 sudo -u postgres psql -p "$DB_PORT" -v ON_ERROR_STOP=1 <<EOSQL
-    ALTER USER ${DB_USER} WITH PASSWORD '${DB_PASS}';
+    DO
+    $$
+    BEGIN
+        IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '${DB_USER}') THEN
+            EXECUTE format('CREATE ROLE %I LOGIN PASSWORD %L', '${DB_USER}', '${DB_PASS}');
+        ELSE
+            EXECUTE format('ALTER ROLE %I WITH LOGIN PASSWORD %L', '${DB_USER}', '${DB_PASS}');
+        END IF;
+    END
+    $$;
     SELECT 'CREATE DATABASE ${DB_NAME} OWNER ${DB_USER}'
     WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${DB_NAME}')
     \gexec
