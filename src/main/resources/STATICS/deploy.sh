@@ -339,6 +339,8 @@ WorkingDirectory=${BACKEND_DIR}
 Environment="JAVA_HOME=${JAVA_HOME}"
 Environment="PATH=${JAVA_HOME}/bin:/usr/local/bin:/usr/bin:/bin"
 Environment="APP_CORS_ALLOWED_ORIGINS=http://${IP_ADDRESS},http://localhost"
+Environment="SPRING_PROFILES_ACTIVE=product"
+Environment="SPRING_JPA_HIBERNATE_DDL_AUTO=update"
 
 ExecStart=${JAVA17_BIN} \\
     -Xms256m -Xmx512m \\
@@ -590,3 +592,4 @@ cat <<SUMMARY
 ╚══════════════════════════════════════════════════════════════════════╝
 
 SUMMARY
+
